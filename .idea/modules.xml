@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/usfk_tracker.iml" filepath="$PROJECT_DIR$/usfk_tracker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Naver_API_news.iml" filepath="$PROJECT_DIR$/Naver_API_news.iml" />
     </modules>
   </component>
 </project>

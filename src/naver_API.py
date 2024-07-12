@@ -29,7 +29,7 @@ class Response:
 
 
 def get_response(url_query: str = url_query, client_id: str = client_id, client_secret: str = client_secret,
-                 response_type: str = response_type):
+                 response_type: str = response_type) -> Response:
     request = urllib.request.Request(url_query)
     request.add_header("X-Naver-Client-Id", client_id)
     request.add_header("X-Naver-Client-Secret", client_secret)
