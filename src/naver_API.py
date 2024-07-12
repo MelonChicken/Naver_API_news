@@ -33,8 +33,8 @@ def get_response(url_query: str = url_query, client_id: str = client_id, client_
     request = urllib.request.Request(url_query)
     request.add_header("X-Naver-Client-Id", client_id)
     request.add_header("X-Naver-Client-Secret", client_secret)
-    print(f"url_query: {url_query}")
-    print(f"request: {request}")
+    #  print(f"url_query: {url_query}")
+    #  print(f"request: {request}")
     response = urllib.request.urlopen(request)
     resp_code = response.getcode()
 

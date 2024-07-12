@@ -1,5 +1,6 @@
 from src.naver_API import get_response
 from src.processing import organize_posts
+from src.storage import save_as_excel
 import sys
 import traceback
 
@@ -20,7 +21,8 @@ def run():
 
     else:
         response = organize_posts(response)
-        print(f"result: {response.cooked_data}")
+        save_as_excel(response=response)
+        #  print(f"result: {response.cooked_data}")
 
 
 run()
