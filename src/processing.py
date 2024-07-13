@@ -17,7 +17,7 @@ def get_post_data_json(post, numbering: int) -> list:
     return result
 
 
-def organize_posts(response: Response) -> list:
+def organize_posts(response: Response):
     if not response.body:
         sys.stdout.write(f"The body of the response is None. [{response.body}]")
         response.cooked_data = None
