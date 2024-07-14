@@ -1,4 +1,5 @@
-pandas~=1.5.2
-konlpy~=0.6.0
-toml~=0.10.2
+pandas
+konlpy
+toml
+discord.py
 fastapi~=0.110.0

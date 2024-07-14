@@ -10,8 +10,7 @@ def get_post_data_json(post, numbering: int) -> list:
     link = post['link']
     description = post['description']
     posted_date = datetime.datetime.strptime(post['pubDate'], '%a, %d %b %Y %H:%M:%S +0900')
-    id_date = posted_date.strftime("%y%m%d-%H%M")
-    id_date = f"{id_date}{str(numbering).zfill(3)}"
+    id_date = posted_date.strftime("%y%m%d-%H%M%S")
     posted_date = posted_date.strftime('%Y-%m-%d %H:%M:%S')
     result = {"index": numbering, 'id': id_date, 'title': title, 'description': description,
               'org_link': org_link, 'link': org_link, 'posted_date': posted_date}
