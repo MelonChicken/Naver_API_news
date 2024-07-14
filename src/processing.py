@@ -10,10 +10,11 @@ def get_post_data_json(post, numbering: int) -> list:
     link = post['link']
     description = post['description']
     posted_date = datetime.datetime.strptime(post['pubDate'], '%a, %d %b %Y %H:%M:%S +0900')
+    id_date = posted_date.strftime("%y%m%d-%H%M")
+    id_date = f"{id_date}{str(numbering).zfill(3)}"
     posted_date = posted_date.strftime('%Y-%m-%d %H:%M:%S')
-
-    result = {'number': numbering, 'title': title, 'description': description,
-                        'org_link': org_link, 'link': org_link, 'posted_date': posted_date}
+    result = {"index": numbering, 'id': id_date, 'title': title, 'description': description,
+              'org_link': org_link, 'link': org_link, 'posted_date': posted_date}
     return result
 
 
@@ -30,8 +31,8 @@ def organize_posts(response: Response):
 
             if (response.cooked_data is not None) and (response.cooked_data["display"] != 0):
                 for post in response.cooked_data["items"]:
-                    cnt += 1
                     json_result.append(get_post_data_json(post=post, numbering=cnt))
+                    cnt += 1
             response.cooked_data = json_result
             return response
         elif response.data_type == "xml":
