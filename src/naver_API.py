@@ -16,7 +16,7 @@ node = config_toml["CLIENT"]["NODE"]
 response_type = config_toml["CLIENT"]["RESPONSE_TYPE"]
 display_count = config_toml["CLIENT"]["DISPLAY_COUNT"]
 sort_criteria = config_toml["CLIENT"]["SORT_CRITERIA"]
-url_query = f"{base_url}{node}.{response_type}?query={search_keyword}&display={display_count}&sort={sort_criteria}"
+url_query = f"{base_url}{node}.{response_type}?query={search_keyword}&display={display_count}&sort={sort_criteria}&start=1"
 
 
 class Response:
@@ -26,6 +26,7 @@ class Response:
         self.data_type = data_type
         self.status_code = status_code
         self.cooked_data = []
+        self.similar_pt = {}
 
 
 def get_response(url_query: str = url_query, client_id: str = client_id, client_secret: str = client_secret,
