@@ -4,6 +4,7 @@ import os
 import sys
 import traceback
 import json
+import datetime
 import pandas as pd
 
 
@@ -38,28 +39,24 @@ class ExcelHandler:
             return traceback.format_exc()
 
         else:
-            if os.path.exists(self.excel_path):
-                sys.stdout.write("[INFO]: The excel file is already exists.\n"
-                                 f"Current Target Path: [{self.excel_path}]")
-                return traceback.format_exc()
-
+            if not overwrite:
+                df = pd.read_excel(self.excel_path)
+                print(df.columns)
+                print(self.headers)
+                cnt = df.shape[0] + 1
+                for post in data:
+                    df.loc[cnt] = [post[key] for key in post.keys()]
+                    cnt += 1
             else:
-                if not overwrite:
-                    df = pd.read_excel(self.excel_path)
-                    cnt = df.shape[0] + 1
-                    for post in data:
-                        df.loc[cnt] = [post[key] for key in post.keys()]
-                        cnt += 1
-                else:
-                    df = pd.DataFrame(columns=self.headers)
-                    cnt = 0
-                    for post in data:
-                        df.loc[cnt] = [post[key] for key in post.keys()]
-                        cnt += 1
+                df = pd.DataFrame(columns=self.headers)
+                cnt = 0
+                for post in data:
+                    df.loc[cnt] = [post[key] for key in post.keys()]
+                    cnt += 1
 
-                df.to_excel(self.excel_path)
-                sys.stdout.write(f"[INFO]: The data has been put to the file successfully.\n"
-                                 f"Path: [{self.excel_path}]")
+            df.to_excel(self.excel_path, index=False)
+            sys.stdout.write(f"[INFO]: The data has been put to the file successfully.\n"
+                             f"Path: [{self.excel_path}]")
 
 
 def save_as_excel(response: Response, headers: list):
@@ -67,12 +64,15 @@ def save_as_excel(response: Response, headers: list):
     data_frame = pd.DataFrame(columns=column_titles)
     cnt = 1
     for post in response.cooked_data:
-        data_frame.loc[cnt] = [post[key] for key in column_titles]
+        tmp_list = [post[key] for key in column_titles if key != "similarity"]
+        tmp_list.append(sum(response.similar_pt[post["id"]]))
+        data_frame.loc[cnt] = tmp_list
         cnt += 1
-
+    current_date = datetime.datetime.now().strftime("%y%m%d-%H%M")
     data_frame_result = data_frame
-    file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "res", "static", "excel", "posts.xlsx")
-    data_frame_result.to_excel(file_path)
+    file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                             "..", "res", "static", "excel", f"posts[{current_date}].xlsx")
+    data_frame_result.to_excel(file_path, index=False)
     return data_frame_result
 
 
@@ -105,7 +105,8 @@ def get_target_possibility(target_headers: list, df: pd.DataFrame = None):
     for idx, post in df.iterrows():
         #  print(post)
         for header in target_headers:
-            words = okt.nouns(post[header])
+            if isinstance(post[header], str):
+                words = okt.nouns(post[header])
             result_dict[header].extend(words)
 
     for header in target_headers:
@@ -117,16 +118,12 @@ def get_target_possibility(target_headers: list, df: pd.DataFrame = None):
             else:
                 header_stat[word] += 1
 
-        total = sum(header_stat.values())
+        total = sum(header_stat.values())-len(header_stat.values())
         result_dict[header] = [[word, header_stat[word], round((header_stat[word]/total), 3)]
-                               for word in header_stat.keys() if 2 < header_stat[word]]
+                               for word in header_stat.keys() if header_stat[word] >2]
         result_dict[header].sort(reverse=True, key=lambda x: [x[1], x[0]])
-    file_path = os.path.join("..", "res", "static", "json", "criteria.json")
+    file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "res", "static", "json", "criteria.json")
     with open(file_path, "w", encoding="utf-8") as f:
         json.dump(result_dict, f, ensure_ascii=False)
-
+    sys.stdout.write(f"The data for target group is saved in \n[ {file_path} ]")
     return result_dict
-
-
-result_dict = get_target_possibility(target_headers=["title", "description"])
-#  print(result_dict)
