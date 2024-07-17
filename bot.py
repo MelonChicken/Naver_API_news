@@ -56,6 +56,8 @@ async def media_checker(channel):
         embed.set_author(name='CrimeInfo')
         embed.set_footer(text="What Happened about USFK")
 
+        await channel.send(embed=embed)
+
     else:
         await channel.send(f"The Total of Today's New Media Interest: [{len(new_posts)}]")
 
@@ -83,3 +85,6 @@ def run():
         bot.run(initialized_bot.token)
     except discord.errors.LoginFailure as e:
         print("Improper token has been passed.")
+
+if __name__ == "__main__":
+    run()

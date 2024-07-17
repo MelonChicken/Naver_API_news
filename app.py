@@ -70,14 +70,18 @@ def check_naver():
     #  print(newest_news)
     new_posts = [post for post in new_media_interests if newest_news < post["id"]]
     #  print(new_posts)
-    current_newest_news = max([post["id"] for post in new_posts])
-    if newest_news == current_newest_news:
+    if len(new_posts) == 0:
         new_flag = False
+        print("there is nothing")
     else:
-        config_toml["DISCORD"]["NEWEST_NEWS"] = current_newest_news
-        new_flag = True
-    with open(toml_dir, "w") as f:
-        toml.dump(config_toml, f)
+        current_newest_news = max([post["id"] for post in new_posts])
+        if newest_news == current_newest_news:
+            new_flag = False
+        else:
+            config_toml["DISCORD"]["NEWEST_NEWS"] = current_newest_news
+            new_flag = True
+        with open(toml_dir, "w") as f:
+            toml.dump(config_toml, f)
 
     return new_flag, new_posts, response
 
